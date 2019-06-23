@@ -70,7 +70,7 @@ class PackageBuilder:
     def pkg_files(self):
         """
         Should return a dictionary with the keys being
-        paths from self.cwd to the files to be packages,
+        paths relative to self.cwd, pointing to the files to be packaged,
         and the values being the path where those files
         should be within the package.
         Ex:
