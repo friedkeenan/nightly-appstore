@@ -1,0 +1,64 @@
+{
+    "packages": [
+        {
+            "author": "yellows8, plutoo",
+            "category": "tool",
+            "description": "Run and load other Homebrew apps",
+            "details": "Homebrew Launcher for Switch!\\nPlaces hbmenu.nro on the root of your SD card.\\nSee https://switchbrew.org/wiki/Homebrew_Menu for more usage instructions.\\nAfter the exploit, HBL is launched by visiting the Album from the home menu.",
+            "extracted": 1363,
+            "filesize": 716,
+            "license": "n/a",
+            "md5": "ccfcef55dc5ddf7258015d071faf9fbf",
+            "name": "nx-hbmenu",
+            "title": "Homebrew Menu",
+            "updated": "22/06/2019",
+            "url": "https://github.com/switchbrew/nx-hbmenu",
+            "version": "3ea2af4"
+        },
+        {
+            "author": "noahc3",
+            "category": "n/a",
+            "description": "n/a",
+            "details": "n/a",
+            "extracted": 374,
+            "filesize": 183,
+            "license": "n/a",
+            "md5": "a260c71ac21ba7fdad2b1f2a3581e7e1",
+            "name": "fakenews-injector",
+            "title": "Fake News Injector",
+            "updated": "22/06/2019",
+            "url": "https://github.com/noahc3/fakenews-injector",
+            "version": "6914a33"
+        },
+        {
+            "author": "WerWolv",
+            "category": "tool",
+            "description": "Backs up, restores, and edits game saves",
+            "details": "n/a",
+            "extracted": 14752,
+            "filesize": 3437,
+            "license": "n/a",
+            "md5": "8a0fe31cf692380e58ef9815a027bc4c",
+            "name": "EdiZon",
+            "title": "EdiZon",
+            "updated": "22/06/2019",
+            "url": "https://github.com/WerWolv/EdiZon",
+            "version": "8a781b9"
+        },
+        {
+            "author": "n/a",
+            "category": "tool",
+            "description": "It uh loads homebrew",
+            "details": "n/a",
+            "extracted": 46,
+            "filesize": 36,
+            "license": "n/a",
+            "md5": "19aa118d4ca7a599f59be7fcb285c4a4",
+            "name": "nx-hbloader",
+            "title": "Homebrew Loader",
+            "updated": "22/06/2019",
+            "url": "https://github.com/switchbrew/nx-hbloader",
+            "version": "3af8c89"
+        }
+    ]
+}
