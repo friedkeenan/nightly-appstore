@@ -4,3 +4,4 @@ zips/*
 packages/*
 scripts.dis/*
 config.py
+repo.json
