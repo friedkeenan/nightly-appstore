@@ -53,7 +53,6 @@ class PackageBuilder:
     def __init__(self):
         self.lock = threading.Lock()
 
-
     @_lock
     def should_update(self):
         raise NotImplementedError
