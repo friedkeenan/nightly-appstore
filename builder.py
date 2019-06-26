@@ -226,6 +226,7 @@ class NightlyHomebrew(NightlyPackage):
 
     _makefile = "Makefile"
     _make_args = ""
+    _make_dir = ""
 
     def __init__(self):
         super().__init__()
@@ -240,6 +241,9 @@ class NightlyHomebrew(NightlyPackage):
                 crop.save(dst_icon)
                 crop.close()
             im.close()
+
+        if not self._make_dir:
+            self._make_dir = self._repo.working_tree_dir
 
         target = self.get_make_var("TARGET")
         if target == "$(notdir $(CURDIR))":
@@ -259,7 +263,8 @@ class NightlyHomebrew(NightlyPackage):
                 output = output.replace("$(TARGET)", target)
 
                 if self._npdm_json is None:
-                    self.pkg_files = {f"{output}.nro": f"switch/{self.name}/{self.name}.nro"}
+                    self.binary = f"switch/{self.name}/{self.name}.nro"
+                    self.pkg_files = {f"{output}.nro": self.binary}
                 else:
                     with Path(self._repo.working_tree_dir, self._npdm_json).open() as f:
                         cont = json.load(f)
@@ -282,10 +287,11 @@ class NightlyHomebrew(NightlyPackage):
                     return line.split(":=", 1)[1].strip()
 
     def build(self):
-        with subprocess.Popen(["make", "-C", self._repo.working_tree_dir, "-f", self._makefile] + self._make_args.split(), stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL) as p:
-            p.wait()
-            if p.poll() != 0:
-                raise ValueError(f"make returned a non-zero result: {p.poll()}")
+        with Path(self.cwd, "build.log").open("w") as f:
+            with subprocess.Popen(["make", "-C", self._make_dir, "-f", self._makefile] + self._make_args.split(), stdout=f, stderr=f) as p:
+                p.wait()
+                if p.poll() != 0:
+                    raise ValueError(f"make returned a non-zero result: {p.poll()}")
 
     @property
     def author(self):

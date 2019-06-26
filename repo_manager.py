@@ -53,6 +53,8 @@ class RepoManager(threading.Thread):
                             os.symlink(icons_path, Path("packages", self.scripts[name].name))
                     except (FileNotFoundError, FileExistsError):
                         pass
+
+                    print("Done.")
                 else:
                     try:
                         os.remove(Path("packages", self.scripts[name].name))
@@ -97,6 +99,7 @@ class RepoManager(threading.Thread):
                         json.dump(repo_json, f, indent=4, sort_keys=True)
 
                     self.repo_json_lock.release()
+                    print("Done.")
 
             self.pause_lock.release()
 
