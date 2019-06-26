@@ -33,6 +33,8 @@ class RepoManager(threading.Thread):
                 name = s.name[:-3]
 
                 if s in new_script_files:
+                    print(f"Adding script: {name}")
+
                     loc = {}
                     with open(s) as f:
                         exec(f.read(), {}, loc)
@@ -58,6 +60,7 @@ class RepoManager(threading.Thread):
                         pass
 
                     self.scripts.pop(name)
+                    print(f"Removed script: {name}")
 
             for name in self.scripts:
                 script = self.scripts[name]
@@ -65,10 +68,10 @@ class RepoManager(threading.Thread):
                 if script.should_update():
                     print("Updating package:", script.name)
 
+                    script.update()
 
                     pkg_info = script.info
 
-                    script.update()
                     pkg_info["extracted"] = script.prepare_pkg()
                     pkg_info["filesize"], pkg_info["md5"] = script.create_pkg()
 
