@@ -8,6 +8,7 @@ import hashlib
 import math
 import threading
 from pathlib import Path
+from PIL import Image
 
 def is_jsonable(x):
     try:
@@ -228,6 +229,17 @@ class NightlyHomebrew(NightlyPackage):
 
     def __init__(self):
         super().__init__()
+
+        src_icon = Path(self._repo.working_tree_dir, "icon.jpg")
+        dst_icon = Path("icons", type(self).__name__, "icon.png")
+        if src_icon.exists() and not dst_icon.exists():
+            os.makedirs(dst_icon.parent)
+            im = Image.open(src_icon)
+            if im.width == im.height == 256:
+                crop = im.crop((0, 53, 256, 203))
+                crop.save(dst_icon)
+                crop.close()
+            im.close()
 
         target = self.get_make_var("TARGET")
         if target == "$(notdir $(CURDIR))":
