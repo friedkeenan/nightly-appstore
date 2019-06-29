@@ -279,6 +279,7 @@ class NightlyHomebrew(NightlyPackage):
         for file in self.pkg_files.values():
             if file.endswith(".nro"):
                 self.binary = file
+                break
 
     def get_make_var(self, var, makefile=None):
         if makefile is None:
