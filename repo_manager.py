@@ -49,8 +49,11 @@ class RepoManager(threading.Thread):
                             os.mkdir("packages")
 
                         icons_path = Path("icons", name).absolute()
+                        dst_path = Path("packages", self.scripts[name].name)
                         if icons_path.exists():
-                            os.symlink(icons_path, Path("packages", self.scripts[name].name))
+                            os.symlink(icons_path, dst_path)
+                        else:
+                            os.symlink(Path("icons", "default").absolute(), dst_path)
                     except (FileNotFoundError, FileExistsError):
                         pass
 

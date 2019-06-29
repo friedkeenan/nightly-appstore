@@ -263,8 +263,7 @@ class NightlyHomebrew(NightlyPackage):
                 output = output.replace("$(TARGET)", target)
 
                 if self._npdm_json is None:
-                    self.binary = f"switch/{self.name}/{self.name}.nro"
-                    self.pkg_files = {f"{output}.nro": self.binary}
+                    self.pkg_files = {f"{output}.nro": f"switch/{self.name}/{self.name}.nro"}
                 else:
                     with Path(self._repo.working_tree_dir, self._npdm_json).open() as f:
                         cont = json.load(f)
@@ -276,6 +275,10 @@ class NightlyHomebrew(NightlyPackage):
             else: # Keys in pkg_files should be relative to the repo directory
                 files = self.pkg_files
                 self.pkg_files = {Path(Path(self._repo.working_tree_dir).relative_to(self.cwd.absolute()), x):files[x] for x in files}
+
+        for file in self.pkg_files.values():
+            if file.endswith(".nro"):
+                self.binary = file
 
     def get_make_var(self, var, makefile=None):
         if makefile is None:
