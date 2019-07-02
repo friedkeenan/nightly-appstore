@@ -16,7 +16,7 @@ Scripts should go in the `scripts` directory and have the `.py` extension (becau
 Check `builder.py` for more details and the `scripts` directory for some examples.
 
 ### Icons
-Icons should go in `icons/<script name>/`. hb-appstore will look for an `icon.png`, which shows when browsing apps, and a `screen.png` file, which shows when an app is selected.
+Icons should go in `icons/<script name>/`; if no icon for the script is found/generated, the icons in `icons/default/` will be used. hb-appstore will look for an `icon.png`, which shows when browsing apps, and a `screen.png` file, which shows when an app is selected.
 
 ### RepoManger
 `manager.kill()` will stop the manager once its finished its current loop.
