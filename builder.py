@@ -224,14 +224,16 @@ class NightlyPackage(PackageBuilder):
 class NightlyHomebrew(NightlyPackage):
     pkg_files = {}
 
+    _make_dir = ""
     _makefile = "Makefile"
     _make_args = ""
-    _make_dir = ""
 
     def __init__(self):
         super().__init__()
 
-        src_icon = Path(self._repo.working_tree_dir, "icon.jpg")
+        self._make_dir = Path(self._repo.working_tree_dir, self._make_dir)
+
+        src_icon = Path(self._make_dir, "icon.jpg")
         dst_icon = Path("icons", type(self).__name__, "icon.png")
         if src_icon.exists() and not dst_icon.exists():
             os.makedirs(dst_icon.parent)
@@ -242,14 +244,12 @@ class NightlyHomebrew(NightlyPackage):
                 crop.close()
             im.close()
 
-        if not self._make_dir:
-            self._make_dir = self._repo.working_tree_dir
 
         target = self.get_make_var("TARGET")
         if target == "$(notdir $(CURDIR))":
-            target = Path(self._repo.working_tree_dir).name
+            target = self._make_dir.name
 
-        for f in os.listdir(self._repo.working_tree_dir):
+        for f in os.listdir(self._make_dir):
             if f == f"{target}.json" or f == "config.json":
                 self._npdm_json = f
                 break
@@ -259,13 +259,13 @@ class NightlyHomebrew(NightlyPackage):
         if not isinstance(type(self).pkg_files, property):
             if len(self.pkg_files) < 1:
                 output = self.get_make_var("OUTPUT")
-                output = output.replace("$(CURDIR)", Path(self._repo.working_tree_dir).name)
+                output = output.replace("$(CURDIR)", str(self._make_dir.relative_to(self.cwd.absolute())))
                 output = output.replace("$(TARGET)", target)
 
                 if self._npdm_json is None:
                     self.pkg_files = {f"{output}.nro": f"switch/{self.name}/{self.name}.nro"}
                 else:
-                    with Path(self._repo.working_tree_dir, self._npdm_json).open() as f:
+                    with Path(self._make_dir, self._npdm_json).open() as f:
                         cont = json.load(f)
                         title_id = cont["title_id"][2:]
                         self.pkg_files = {
@@ -274,7 +274,7 @@ class NightlyHomebrew(NightlyPackage):
                         }
             else: # Keys in pkg_files should be relative to the repo directory
                 files = self.pkg_files
-                self.pkg_files = {Path(Path(self._repo.working_tree_dir).relative_to(self.cwd.absolute()), x):files[x] for x in files}
+                self.pkg_files = {Path(self._make_dir.relative_to(self.cwd.absolute()), x):files[x] for x in files}
 
         for file in self.pkg_files.values():
             if file.endswith(".nro"):
@@ -285,7 +285,7 @@ class NightlyHomebrew(NightlyPackage):
         if makefile is None:
             makefile = self._makefile
 
-        with Path(self._repo.working_tree_dir, makefile).open() as f:
+        with Path(self._make_dir, makefile).open() as f:
             for line in f.readlines():
                 if var in line and ":=" in line:
                     return line.split(":=", 1)[1].strip()
