@@ -284,7 +284,7 @@ class NightlyHomebrew(NightlyPackage):
                 self.binary = file
                 break
 
-        libnx_path = Path(self.cwd.parent, "libnx", self._libnx_tag)
+        libnx_path = Path(self.cwd.parent, "libnx", self._libnx_url.split("/")[-2], self._libnx_tag)
         try:
             self._libnx_repo = git.Repo(libnx_path)
         except git.exc.InvalidGitRepositoryError:
