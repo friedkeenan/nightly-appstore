@@ -228,6 +228,9 @@ class NightlyHomebrew(NightlyPackage):
     _makefile = "Makefile"
     _make_args = ""
 
+    _libnx_url = "https://github.com/switchbrew/libnx"
+    _libnx_tag = "master"
+
     def __init__(self):
         super().__init__()
 
@@ -281,6 +284,17 @@ class NightlyHomebrew(NightlyPackage):
                 self.binary = file
                 break
 
+        libnx_path = Path(self.cwd.parent, "libnx", self._libnx_tag)
+        try:
+            self._libnx_repo = git.Repo(libnx_path)
+        except git.exc.InvalidGitRepositoryError:
+            shutil.rmtree(libnx_path)
+            self._libnx_repo = git.Repo.clone_from(self._libnx_url, libnx_path, recursive=True)
+        except git.exc.NoSuchPathError:
+            self._libnx_repo = git.Repo.clone_from(self._libnx_url, libnx_path, recursive=True)
+
+        self._libnx_repo.git.checkout(self._libnx_tag)
+
     def get_make_var(self, var, makefile=None):
         if makefile is None:
             makefile = self._makefile
@@ -290,9 +304,32 @@ class NightlyHomebrew(NightlyPackage):
                 if var in line and ":=" in line:
                     return line.split(":=", 1)[1].strip()
 
+    def build_libnx(self):
+        if self._libnx_tag == "master":
+            self._libnx_repo.remotes.origin.pull()
+
+        libnx_path = Path(self._libnx_repo.working_tree_dir, "nx")
+
+        with Path(libnx_path.parent, "build.log").open("w") as f:
+            with subprocess.Popen(["make", "-C", libnx_path], stdout=f, stderr=f) as p:
+                p.wait()
+                if p.poll() != 0:
+                    raise ValueError(f"make returned a non-zero result: {p.poll()}")
+
+        bsd_path = Path(libnx_path, "external", "bsd", "include")
+        for ext in os.listdir(bsd_path):
+            try:
+                os.symlink(Path(bsd_path, ext), Path(libnx_path, "include", ext))
+            except FileExistsError:
+                pass
+
+        return libnx_path
+
     def build(self):
+        libnx_path = self.build_libnx()
+
         with Path(self.cwd, "build.log").open("w") as f:
-            with subprocess.Popen(["make", "-C", self._make_dir, "-f", self._makefile] + self._make_args.split(), stdout=f, stderr=f) as p:
+            with subprocess.Popen(["make", "-C", self._make_dir, "-f", self._makefile, f"LIBNX={libnx_path}"] + self._make_args.split(), stdout=f, stderr=f) as p:
                 p.wait()
                 if p.poll() != 0:
                     raise ValueError(f"make returned a non-zero result: {p.poll()}")
