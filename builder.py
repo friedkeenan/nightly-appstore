@@ -193,7 +193,7 @@ class NightlyPackage(PackageBuilder):
 
     @_lock
     def update(self):
-        self._repo.remotes.origin.pull()
+        self._repo.remotes.origin.pull(recurse_submodules=True)
 
         try:
             self.build()
