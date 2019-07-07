@@ -228,6 +228,8 @@ class NightlyHomebrew(NightlyPackage):
     _makefile = "Makefile"
     _make_args = ""
 
+    _icon_file = "icon.jpg"
+
     _libnx_url = "https://github.com/switchbrew/libnx"
     _libnx_tag = "master"
 
@@ -236,7 +238,7 @@ class NightlyHomebrew(NightlyPackage):
 
         self._make_dir = Path(self._repo.working_tree_dir, self._make_dir)
 
-        src_icon = Path(self._make_dir, "icon.jpg")
+        src_icon = Path(self._make_dir, self._icon_file)
         dst_icon = Path("icons", type(self).__name__, "icon.png")
         if src_icon.exists() and not dst_icon.exists():
             os.makedirs(dst_icon.parent)
