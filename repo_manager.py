@@ -73,7 +73,11 @@ class RepoManager(threading.Thread):
                 if script.should_update():
                     print("Updating package:", script.name)
 
-                    script.update()
+                    try:
+                        script.update()
+                    except Exception as e:
+                        print(f"Updating {script.name} failed:", e)
+                        continue
 
                     pkg_info = script.info
 

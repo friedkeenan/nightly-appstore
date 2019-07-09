@@ -34,7 +34,6 @@ def _lock(func):
 
 class PackageBuilder:
     # Note that all of these can be overriden by property methods
-    title = "n/a"
     author = "n/a"
     category = "n/a"
     version = "n/a"
@@ -116,13 +115,15 @@ class PackageBuilder:
 
                 if src.is_dir():
                     shutil.copytree(src, dst)
-                    for root, dirs, files in os.walk(dst):
-                        total_size += Path(root, files).stat().st_size
+                    for root, dirs, walk_files in os.walk(dst):
+                        for wf in walk_files:
+                            total_size += Path(root, wf).stat().st_size
+                            f.write(f"U: {root}/{wf}\n")
                 else:
                     shutil.copy2(src, dst)
                     total_size += dst.stat().st_size
 
-                f.write(f"U: {files[file]}")
+                    f.write(f"U: {files[file]}\n")
         total_size += manifest_path.stat().st_size
 
         info_path = Path(self.cwd, "tmp", "info.json")
@@ -164,6 +165,11 @@ class PackageBuilder:
     def cwd(self):
         return Path("build", self.name)
 
+    @property
+    def title(self):
+        return type(self).__name__
+    
+
 class NightlyPackage(PackageBuilder):
     def __init__(self):
         super().__init__()
@@ -195,12 +201,9 @@ class NightlyPackage(PackageBuilder):
     def update(self):
         self._repo.remotes.origin.pull(recurse_submodules=True)
 
-        try:
-            self.build()
-        except ValueError as e:
-            print(f"Building {self.name} failed:", e)
-        
         Path(self.cwd, ".first_update").open("a").close()
+
+        self.build()
 
     def build(self):
         """
