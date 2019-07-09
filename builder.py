@@ -117,8 +117,9 @@ class PackageBuilder:
                     shutil.copytree(src, dst)
                     for root, dirs, walk_files in os.walk(dst):
                         for wf in walk_files:
-                            total_size += Path(root, wf).stat().st_size
-                            f.write(f"U: {root}/{wf}\n")
+                            p = Path(root, wf)
+                            total_size += p.stat().st_size
+                            f.write(f"U: {p.relative_to(Path(self.cwd, 'tmp'))}\n")
                 else:
                     shutil.copy2(src, dst)
                     total_size += dst.stat().st_size
