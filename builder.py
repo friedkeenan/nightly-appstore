@@ -221,6 +221,10 @@ class NightlyPackage(PackageBuilder):
         return ver
 
     @property
+    def changelog(self):
+        return self._repo.head.reference.commit.message
+
+    @property
     def name(self):
         return self.url.split("/")[-1]
     
