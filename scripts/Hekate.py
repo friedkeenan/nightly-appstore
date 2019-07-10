@@ -1,6 +1,3 @@
-import subprocess
-from pathlib import Path
-
 from builder import *
 
 class Hekate(NightlyHomebrew):
