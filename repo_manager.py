@@ -37,7 +37,7 @@ class RepoManager(threading.Thread):
 
                     loc = {}
                     with open(s) as f:
-                        exec(f.read(), {}, loc)
+                        exec(f.read(), loc, loc)
 
                     if name not in loc:
                         raise ValueError("Scripts must have a builder in them with the same name as their filename without the extension")
