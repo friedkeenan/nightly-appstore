@@ -217,7 +217,7 @@ class NightlyPackage(PackageBuilder):
         ver = self._repo.head.reference.commit.hexsha
         ver = ver[:7]
         if self._repo.is_dirty():
-            ver += "-dirty"
+            ver += "-d"
         return ver
 
     @property
