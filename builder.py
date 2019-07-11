@@ -289,10 +289,11 @@ class NightlyHomebrew(NightlyPackage):
                 files = self.pkg_files
                 self.pkg_files = {Path(self._make_dir.relative_to(self.cwd.absolute()), x):files[x] for x in files}
 
-        for file in self.pkg_files.values():
-            if file.endswith(".nro"):
-                self.binary = file
-                break
+        if not hasattr(self, "binary"):
+            for file in self.pkg_files.values():
+                if file.endswith(".nro"):
+                    self.binary = file
+                    break
 
         libnx_path = Path(self.cwd.parent, "libnx", self._libnx_url.split("/")[-2], self._libnx_tag)
         try:
