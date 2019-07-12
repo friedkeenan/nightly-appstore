@@ -75,9 +75,6 @@ class PackageBuilder:
         should be within the package.
         Ex:
         {"application/application.nro": "switch/application/application.nro"}
-
-        If the key is "_touch" then its value should be
-        a list of empty files to create.
         """
         raise NotImplementedError
 
@@ -96,14 +93,6 @@ class PackageBuilder:
         manifest_path = Path(self.cwd, "tmp", "manifest.install")
         with manifest_path.open("w") as f:
             for file in files:
-                if file == "_touch":
-                    for f in files["_touch"]:
-                        touch = Path(self.cwd, "tmp", f)
-                        if not touch.parent.exists():
-                            os.makedirs(touch.parent)
-                        touch.open("a").close()
-                    continue
-
                 dst = Path(self.cwd, "tmp", files[file])
                 if not dst.parent.exists():
                     os.makedirs(dst.parent)
@@ -257,7 +246,6 @@ class NightlyHomebrew(NightlyPackage):
                 crop.close()
             im.close()
 
-
         target = self.get_make_var("TARGET")
         if target == "$(notdir $(CURDIR))":
             target = self._make_dir.name
@@ -281,13 +269,10 @@ class NightlyHomebrew(NightlyPackage):
                     with Path(self._make_dir, self._npdm_json).open() as f:
                         cont = json.load(f)
                         title_id = cont["title_id"][2:]
-                        self.pkg_files = {
-                            f"{output}.nsp": f"atmosphere/titles/{title_id}/exefs.nsp",
-                            "_touch": [f"atmosphere/titles/{title_id}/flags/boot2.flag"]
-                        }
+                        self.pkg_files = {f"{output}.nsp": f"atmosphere/titles/{title_id}/exefs.nsp"}
             else: # Keys in pkg_files should be relative to the repo directory
                 files = self.pkg_files
-                self.pkg_files = {Path(self._make_dir.relative_to(self.cwd.absolute()), x):files[x] for x in files}
+                self.pkg_files = {Path(self._make_dir.relative_to(self.cwd.absolute()), x): files[x] for x in files}
 
         if not hasattr(self, "binary"):
             for file in self.pkg_files.values():
